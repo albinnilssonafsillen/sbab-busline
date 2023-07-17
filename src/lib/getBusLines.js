@@ -10,9 +10,6 @@ export async function getBusLines() {
 
     const cleanedData = cleanData(busLines);
 
-    //REMOVE DUPLICATES WHEN THEY HAVE THE SAME DIRECTION CODE, LINENUMBER AND STOPNAME
-    // removeDuplicatesIfSameLineNumberAndStopName(cleanedData);
-
     const busLineCounts = getBusLineCount(cleanedData);
 
     const top10BusLines = getTop10BusLines(busLineCounts);
@@ -60,14 +57,31 @@ function getBusLineCount(cleanedData) {
 }
 
 function cleanData(busLines) {
+  // Filter all Buslines with the DirectionCode = "1"
   const busLinesWithoutDuplicates = busLines.filter(
     (line) => line.DirectionCode === '1'
   );
 
+  // Filter all Buslines that does have an assigned value in StopName
   const removeIfStopPointNameisUndefined = busLinesWithoutDuplicates.filter(
     (busLine) => busLine.StopName !== undefined
   );
-  return removeIfStopPointNameisUndefined;
+
+  // Filter out duplicates if buslines have the same LineNumber and Same StopName
+  // (e.g. LinuNumber 631 with JourneyPatternPointnumber ""60050" and ""60054" & "63019" and ""63020")
+  const filteredBusStops = busLinesWithoutDuplicates.filter(
+    (item, index, self) => {
+      return (
+        index ===
+        self.findIndex(
+          (t) =>
+            t.LineNumber === item.LineNumber && t.StopName === item.StopName
+        )
+      );
+    }
+  );
+
+  return filteredBusStops;
 }
 
 function addData(busLines, stops) {
