@@ -43,25 +43,27 @@ function App() {
 
   return (
     <>
-      <h1>10 buses in SL with the most stops</h1>
+      <h2>SL busslinjer med flest antal stopp:</h2>
       <div className="card">
         {loader && <Spinner />}
         {busLines?.map((line, index) => (
           <button key={index} onClick={() => renderSelectLine(line.LineNumber)}>
-            BussNummer: {line.LineNumber} Stop: {line.StopNames[0]}
+            Buss: {line.LineNumber} 
+             {/* Stop: {line.StopNames.length} */}
           </button>
         ))}
         {selectedLine && (
-          <div>
-            <h2>
-              Vald buslinje: {lineNumber} {selectedLine[0]} -{' '}
-              {selectedLine[selectedLine.length - 1]}
-            </h2>
-            <ul>
+          <div> 
+            <h3>{lineNumber}</h3>
+            <h3>
+              Start: {selectedLine[0]} -{' '}
+               Slut: {selectedLine[selectedLine.length - 1]}
+            </h3>
+            <div>
               {selectedLine.map((stop, index) => (
-                <li key={index}>{stop}</li>
+                <p key={index}>{stop}</p>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>
