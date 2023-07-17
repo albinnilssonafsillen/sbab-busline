@@ -14,18 +14,47 @@ export async function getBusLines() {
 
     const top10BusLines = getTop10BusLines(busLineCounts);
 
-    const filteredData = sortBusLines(
-      cleanedData,
-      top10BusLines,
-      busLineCounts
-    );
+    const filteredData = sortBusLines(cleanedData, top10BusLines);
 
-    console.log(filteredData);
+    const stopNamesByLineNumber = getDataToReturn(filteredData);
 
-    return filteredData;
+    sortLineNumberByBusStopsCount(stopNamesByLineNumber);
+
+    return stopNamesByLineNumber;
   } catch (error) {
     throw new Error(`An Error occurred in [getBusLines] Error: ${error}`);
   }
+}
+
+function sortLineNumberByBusStopsCount(stopNamesByLineNumber) {
+  stopNamesByLineNumber.sort((a, b) => {
+    const stopNamesCountA = a.StopNames.length;
+    const stopNamesCountB = b.StopNames.length;
+
+    return stopNamesCountB - stopNamesCountA;
+  });
+}
+
+function getDataToReturn(filteredData) {
+  const stopNamesByLineNumber = [];
+
+  for (const entry of filteredData) {
+    const { LineNumber, StopName } = entry;
+
+    const lineIndex = stopNamesByLineNumber.findIndex(
+      (item) => item.LineNumber === LineNumber
+    );
+
+    if (lineIndex !== -1) {
+      stopNamesByLineNumber[lineIndex].StopNames.push(StopName);
+    } else {
+      stopNamesByLineNumber.push({
+        LineNumber,
+        StopNames: [StopName],
+      });
+    }
+  }
+  return stopNamesByLineNumber;
 }
 
 function sortBusLines(cleanedData, top10BusLines, busLineCounts) {
@@ -33,9 +62,6 @@ function sortBusLines(cleanedData, top10BusLines, busLineCounts) {
     top10BusLines.includes(line.LineNumber)
   );
 
-  filteredData.sort(
-    (a, b) => busLineCounts[b.LineNumber] - busLineCounts[a.LineNumber]
-  );
   return filteredData;
 }
 
@@ -105,25 +131,4 @@ async function getAllBusLines() {
   const busLinesres = await axios.get('http://localhost:3000/api/buslines');
   const busLines = busLinesres.data.ResponseData.Result;
   return busLines;
-}
-
-function removeDuplicatesIfSameLineNumberAndStopName(
-  busLinesWithoutDuplicates
-) {
-  const filteredDataBusStops = busLinesWithoutDuplicates.filter(
-    (item, index, self) => {
-      return (
-        index ===
-        self.findIndex(
-          (t) =>
-            t.LineNumber === item.LineNumber && t.StopName === item.StopName
-        )
-      );
-    }
-  );
-
-  console.log(
-    'Removed if StopName & Linenumbers are the same =>',
-    filteredDataBusStops
-  );
 }
