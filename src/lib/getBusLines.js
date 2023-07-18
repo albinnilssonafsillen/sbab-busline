@@ -6,7 +6,7 @@ export async function getBusLines() {
 
     const stops = await getBusStops();
 
-    addData(busLines, stops);
+    mergeAPICallsData(busLines, stops);
 
     const cleanedData = cleanData(busLines);
 
@@ -110,7 +110,7 @@ function cleanData(busLines) {
   return filteredBusStops;
 }
 
-function addData(busLines, stops) {
+function mergeAPICallsData(busLines, stops) {
   busLines.map((busLine) => {
     const busStopName = stops.filter(
       (busStop) =>
