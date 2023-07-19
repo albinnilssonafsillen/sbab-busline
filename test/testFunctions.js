@@ -1,31 +1,3 @@
-import axios from 'axios';
-
-export async function getBusLines() {
-  try {
-    const busLines = await getAllBusLines();
-
-    const stops = await getBusStops();
-
-    mergeAPICallsData(busLines, stops);
-
-    const cleanedData = cleanData(busLines);
-
-    const busLineCounts = getBusLineCount(cleanedData);
-
-    const top10BusLines = getTop10BusLines(busLineCounts);
-
-    const filteredData = getTop10BusLinesData(cleanedData, top10BusLines);
-
-    const stopNamesByLineNumber = getDataToReturn(filteredData);
-
-    sortLineNumberByBusStopsCount(stopNamesByLineNumber);
-
-    return stopNamesByLineNumber;
-  } catch (error) {
-    throw new Error(`An Error occurred in [getBusLines] Error: ${error}`);
-  }
-}
-
 function sortLineNumberByBusStopsCount(stopNamesByLineNumber) {
   stopNamesByLineNumber.sort((a, b) => {
     const stopNamesCountA = a.StopNames.length;
@@ -110,25 +82,10 @@ function cleanData(busLines) {
   return filteredBusStops;
 }
 
-function mergeAPICallsData(busLines, stops) {
-  busLines.map((busLine) => {
-    const busStopName = stops.filter(
-      (busStop) =>
-        busStop.StopPointNumber === busLine.JourneyPatternPointNumber &&
-        busStop.StopPointName !== undefined
-    )[0];
-    busLine.StopName = busStopName?.StopPointName;
-  });
-}
-
-async function getBusStops() {
-  const busStops = await axios.get('http://localhost:3000/api/busstops');
-  const stops = busStops.data.ResponseData.Result;
-  return stops;
-}
-
-async function getAllBusLines() {
-  const busLinesres = await axios.get('http://localhost:3000/api/buslines');
-  const busLines = busLinesres.data.ResponseData.Result;
-  return busLines;
-}
+module.exports = {
+  cleanData,
+  getBusLineCount,
+  getTop10BusLines,
+  getTop10BusLinesData,
+  getDataToReturn,
+};
