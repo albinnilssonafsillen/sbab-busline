@@ -1,7 +1,6 @@
-// import axios from 'axios';
-const axios = require('axios');
+import axios from 'axios';
 
-async function getBusLines() {
+export async function getBusLines() {
   try {
     const busLines = await getAllBusLines();
 
@@ -134,11 +133,11 @@ async function getAllBusLines() {
   return busLines;
 }
 
-module.exports = {
-  getBusLines,
-  cleanData,
-  getBusLineCount,
-  getTop10BusLines,
-  getTop10BusLinesData,
-  getDataToReturn,
-};
+// module.exports = {
+//   getBusLines,
+//   cleanData,
+//   getBusLineCount,
+//   getTop10BusLines,
+//   getTop10BusLinesData,
+//   getDataToReturn,
+// };

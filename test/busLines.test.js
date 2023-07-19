@@ -1,11 +1,11 @@
-const { testData } = require('./testData');
-const {
+import { testData } from './testData';
+import {
   cleanData,
   getBusLineCount,
   getTop10BusLines,
   getTop10BusLinesData,
   getDataToReturn,
-} = require('../src/lib/getBusLines');
+} from '../src/lib/getBusLines';
 
 test('check length of array', () => {
   expect(testData.length).toBeGreaterThan(20000);
