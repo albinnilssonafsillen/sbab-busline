@@ -1,6 +1,7 @@
-import axios from 'axios';
+// import axios from 'axios';
+const axios = require('axios');
 
-export async function getBusLines() {
+async function getBusLines() {
   try {
     const busLines = await getAllBusLines();
 
@@ -14,7 +15,7 @@ export async function getBusLines() {
 
     const top10BusLines = getTop10BusLines(busLineCounts);
 
-    const filteredData = sortBusLines(cleanedData, top10BusLines);
+    const filteredData = getTop10BusLinesData(cleanedData, top10BusLines);
 
     const stopNamesByLineNumber = getDataToReturn(filteredData);
 
@@ -57,7 +58,7 @@ function getDataToReturn(filteredData) {
   return stopNamesByLineNumber;
 }
 
-function sortBusLines(cleanedData, top10BusLines, busLineCounts) {
+function getTop10BusLinesData(cleanedData, top10BusLines) {
   const filteredData = cleanedData.filter((line) =>
     top10BusLines.includes(line.LineNumber)
   );
@@ -132,3 +133,12 @@ async function getAllBusLines() {
   const busLines = busLinesres.data.ResponseData.Result;
   return busLines;
 }
+
+module.exports = {
+  getBusLines,
+  cleanData,
+  getBusLineCount,
+  getTop10BusLines,
+  getTop10BusLinesData,
+  getDataToReturn,
+};
